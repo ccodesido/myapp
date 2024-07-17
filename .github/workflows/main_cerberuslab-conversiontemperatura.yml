@@ -9,6 +9,12 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  AZURE_WEBAPP_NAME: 'cerberuslab-conversiontemperatura'
+  AZURE_WEBAPP_PACKAGE_PATH: '.' 
+  DOTNET_VERSION: '8.x'
+  DOTNET_PATH: 'D:\a\myapp\myapp\bin\Release\net8.0\myapp'
+
 jobs:
   build:
     runs-on: windows-latest
@@ -19,20 +25,20 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }} 
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        #run: dotnet publish myapp.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        #run: dotnet publish myapp.sln -c Release -o ${{ env.DOTNET_PATH }} 
         run: dotnet publish myapp.sln -c Release
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: net-app
+          path: ${{ env.DOTNET_PATH }} 
 
   deploy:
     runs-on: windows-latest
@@ -47,7 +53,7 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
+          name: net-app
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -60,7 +66,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'cerberuslab-conversiontemperatura'
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
           slot-name: 'Production'
-          package: .
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
           
