@@ -13,7 +13,7 @@ env:
   AZURE_WEBAPP_NAME: 'cerberuslab-conversiontemperatura'
   AZURE_WEBAPP_PACKAGE_PATH: '.' 
   DOTNET_VERSION: '8.x'
-  DOTNET_PATH: 'D:\a\myapp\myapp\bin\Release\net8.0\myapp'
+  DOTNET_PATH: 'D:\a\myapp\myapp\bin\Release\net8.0'
 
 jobs:
   build:
@@ -31,8 +31,8 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        #run: dotnet publish myapp.sln -c Release -o ${{ env.DOTNET_PATH }} 
-        run: dotnet publish myapp.sln -c Release
+        run: dotnet publish myapp.sln -c Release -o ${{ env.DOTNET_PATH }} 
+        #run: dotnet publish myapp.sln -c Release
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
